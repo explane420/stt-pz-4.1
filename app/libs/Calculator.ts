@@ -1,8 +1,9 @@
 import { evaluate } from 'mathjs'
 
+
 export class Calculator {
 
-  actions: Array<string> = ['+', '-', '*', '/', '.', '%'];
+  mathParams: Array<string> = ['+', '-', '*', '/', '.', '%'];
   dashboard: HTMLInputElement;
 
   //constructor
@@ -11,58 +12,33 @@ export class Calculator {
     this.setTheme('theme-one');
   }
 
-  printAction(val: string): void {
-    if (val === '+/-') {
-      let firstDigit = this.dashboard.value[0]
-      if (firstDigit === '-') {
-        this.dashboard.value = this.dashboard.value.slice(1, this.dashboard.value.length)
-      } else {
-        this.dashboard.value = '-' + this.dashboard.value
-      }
-    } else if (this.actions.includes(this.dashboard.value[this.dashboard.value.length - 1])
-      || this.dashboard.value.length === 0) {
-    } else {
-      this.dashboard.value += val
-    }
-  }
+  printNumber(mathParam: string) { this.dashboard.value += mathParam }
 
-  printDigit(val: string) {
-    this.dashboard.value += val
-  }
+  exampleSolution() { this.dashboard.value = evaluate(this.dashboard.value) }
 
-  solve() {
-    let expression = this.dashboard.value
-    this.dashboard.value = evaluate(expression)
-  }
+  clearPanel() { this.dashboard.value = '' }
 
-  clr() {
-    this.dashboard.value = ''
-  }
+  saveToLocal() { localStorage.setItem('result', this.dashboard.value); }
+
+  pasteInLocal() { this.printNumber(localStorage.getItem('result')) }
+
 
   setTheme(themeName) {
     localStorage.setItem('theme', themeName);
     document.querySelector('body').className = themeName;
   }
 
-  toggleTheme() {
-    let theme = localStorage.getItem('theme');
+  changeTheme() {
+    const theme = localStorage.getItem('theme') === 'theme-second' ? 'theme-one' : 'theme-second';
+    this.setTheme(theme);
+  }
 
-    if (theme === 'theme-second') {
-      theme = 'theme-one'
-    } else if (theme === 'theme-one') {
-      theme = 'theme-second'
+  changeParams(mathParam: string): void {
+    if (mathParam === '+/-') {
+      this.dashboard.value = (this.dashboard.value[0] === '-') ? this.dashboard.value.slice(1) : '-' + this.dashboard.value;
+    } else if (!this.mathParams.includes(this.dashboard.value[this.dashboard.value.length - 1]) && this.dashboard.value.length !== 0) {
+      this.dashboard.value += mathParam;
     }
-    setTimeout(() => {
-      this.setTheme(theme);
-    }, 500)
-  }
-
-  save() {
-    localStorage.setItem('result', this.dashboard.value);
-  }
-
-  paste() {
-    this.printDigit(localStorage.getItem('result'))
   }
 
 }

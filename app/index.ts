@@ -14,3 +14,5 @@ const calculator = new Calculator();
 console.log('HASH ' + HASH)
 console.log('ENV ' + ENV)
 console.log('calculator ', calculator)
+
+
